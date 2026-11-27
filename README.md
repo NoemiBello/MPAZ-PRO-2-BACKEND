@@ -186,4 +186,4 @@ src/main/resources/
 ## Repositorio
 
 **Código fuente del backend:** [MPAZ-PRO-2-BACKEND](https://github.com/NoemiBello/MPAZ-PRO-2-BACKEND)  
-**Rama de implementación:** `noemi-bello`
+
