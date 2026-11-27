@@ -2,6 +2,7 @@
 package cl.mpazpro2.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "contenidos")
@@ -11,26 +12,39 @@ public class Contenido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "La asignatura es obligatoria")
     @Column(nullable = false, length = 100)
     private String asignatura;
 
     @Column(nullable = false, length = 100)
     private String unidad;
 
+    @NotBlank(message = "El objetivo es obligatorio")
     @Column(nullable = false, length = 300)
     private String objetivo;
 
+    @NotBlank(message = "El tipo es obligatorio")
     @Column(nullable = false, length = 80)
     private String tipo;
 
+    @NotBlank(message = "El titulo es obligatorio")
     @Column(nullable = false, length = 180)
     private String titulo;
 
+    @NotBlank(message = "El contenido es obligatorio")
     @Column(nullable = false, length = 2000)
     private String contenido;
 
     @Column(length = 1000)
     private String pregunta;
+
+    @Column(length = 1000)
+    private String imagenUri;
+
+    @Enumerated(EnumType.STRING)
+
+    @Column(nullable = false, length = 20)
+    private EstadoContenido estado = EstadoContenido.PENDIENTE;
 
     public Contenido() {
     }
@@ -98,4 +112,23 @@ public class Contenido {
     public void setPregunta(String pregunta) {
         this.pregunta = pregunta;
     }
+
+
+    public String getImagenUri() {
+        return imagenUri;
+    }
+
+    public void setImagenUri(String imagenUri) {
+        this.imagenUri = imagenUri;
+    }
+
+    public EstadoContenido getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoContenido estado) {
+        this.estado = estado;
+    }
+
+
 }
