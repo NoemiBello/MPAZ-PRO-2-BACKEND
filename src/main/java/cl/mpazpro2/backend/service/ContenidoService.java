@@ -50,6 +50,8 @@ public class ContenidoService {
         contenido.setTitulo(datos.getTitulo());
         contenido.setContenido(datos.getContenido());
         contenido.setPregunta(datos.getPregunta());
+        contenido.setImagenUri(datos.getImagenUri());
+        contenido.setEstado(datos.getEstado());
 
         return repository.save(contenido);
     }
