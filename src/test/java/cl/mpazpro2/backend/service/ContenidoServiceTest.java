@@ -1,6 +1,7 @@
 package cl.mpazpro2.backend.service;
 
 import cl.mpazpro2.backend.model.Contenido;
+import cl.mpazpro2.backend.model.EstadoContenido;
 import cl.mpazpro2.backend.repository.ContenidoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,10 +35,12 @@ class ContenidoServiceTest {
         c.setAsignatura("Lenguaje");
         c.setUnidad("Unidad 1");
         c.setObjetivo("OA 5 - Comprension lectora");
-        c.setTipo("Actividad");
+        c.setTipo("Lectura");
         c.setTitulo(titulo);
         c.setContenido("Lee el primer capitulo de Papelucho.");
         c.setPregunta("Que fue lo mas divertido que le paso?");
+        c.setImagenUri("content://galeria/papelucho.jpg");
+        c.setEstado(EstadoContenido.PENDIENTE);
         return c;
     }
 
@@ -57,8 +60,9 @@ class ContenidoServiceTest {
     }
 
     @Test
-    void buscarPorId_cuandoExiste_retornaContenido() {
+    void buscarPorId_cuandoExiste_retornaContenidoCompleto() {
         Contenido esperado = crearContenidoEjemplo(1L, "Papelucho");
+        esperado.setEstado(EstadoContenido.APROBADO);
         when(repository.findById(1L)).thenReturn(Optional.of(esperado));
 
         Contenido resultado = service.buscarPorId(1L);
@@ -66,6 +70,8 @@ class ContenidoServiceTest {
         assertThat(resultado.getId()).isEqualTo(1L);
         assertThat(resultado.getTitulo()).isEqualTo("Papelucho");
         assertThat(resultado.getPregunta()).isNotBlank();
+        assertThat(resultado.getImagenUri()).isEqualTo("content://galeria/papelucho.jpg");
+        assertThat(resultado.getEstado()).isEqualTo(EstadoContenido.APROBADO);
     }
 
     @Test
@@ -81,7 +87,7 @@ class ContenidoServiceTest {
     }
 
     @Test
-    void crear_limpiaIdYGuardaContenido() {
+    void crear_limpiaIdYGuardaContenidoConEstadoInicial() {
         Contenido entrada = crearContenidoEjemplo(999L, "Nuevo contenido");
         when(repository.save(any(Contenido.class))).thenAnswer(inv -> {
             Contenido guardado = inv.getArgument(0);
@@ -94,14 +100,17 @@ class ContenidoServiceTest {
 
         assertThat(creado.getId()).isEqualTo(10L);
         assertThat(creado.getTitulo()).isEqualTo("Nuevo contenido");
+        assertThat(creado.getEstado()).isEqualTo(EstadoContenido.PENDIENTE);
     }
 
     @Test
-    void actualizar_actualizaTodosLosCamposIncluyendoPregunta() {
+    void actualizar_actualizaTodosLosCamposIncluyendoPreguntaImagenYEstado() {
         Contenido existente = crearContenidoEjemplo(5L, "Titulo original");
         Contenido nuevosDatos = crearContenidoEjemplo(null, "Titulo actualizado");
         nuevosDatos.setAsignatura("Matematica");
         nuevosDatos.setPregunta("Cuanto es 15 + 10?");
+        nuevosDatos.setImagenUri("content://galeria/nueva.png");
+        nuevosDatos.setEstado(EstadoContenido.APROBADO);
 
         when(repository.findById(5L)).thenReturn(Optional.of(existente));
         when(repository.save(any(Contenido.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -112,6 +121,8 @@ class ContenidoServiceTest {
         assertThat(actualizado.getTitulo()).isEqualTo("Titulo actualizado");
         assertThat(actualizado.getAsignatura()).isEqualTo("Matematica");
         assertThat(actualizado.getPregunta()).isEqualTo("Cuanto es 15 + 10?");
+        assertThat(actualizado.getImagenUri()).isEqualTo("content://galeria/nueva.png");
+        assertThat(actualizado.getEstado()).isEqualTo(EstadoContenido.APROBADO);
     }
 
     @Test
@@ -122,5 +133,17 @@ class ContenidoServiceTest {
         service.eliminar(3L);
 
         verify(repository).delete(existente);
+    }
+
+    @Test
+    void eliminar_cuandoNoExiste_lanzaNotFound() {
+        when(repository.findById(404L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.eliminar(404L))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> {
+                    ResponseStatusException rse = (ResponseStatusException) ex;
+                    assertThat(rse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                });
     }
 }
