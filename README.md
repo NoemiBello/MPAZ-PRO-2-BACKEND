@@ -157,6 +157,20 @@ Se ejecutaron pruebas HTTP sobre el backend para comprobar:
 
 Estas comprobaciones corresponden a la **API REST y su base de datos**.
 
+### Pruebas automatizadas y colección HTTP
+
+El proyecto incluye pruebas automatizadas con **JUnit 5 + Mockito + MockMvc** y la colección `api-tests.http` para verificación directa desde IntelliJ IDEA:
+
+- `ContenidoServiceTest`: valida lógica CRUD (`listar`, `buscarPorId`, `crear`, `actualizar`, `eliminar`) y respuestas `404`.
+- `ContenidoControllerTest`: valida el flujo HTTP completo (`POST` `201`, `GET` `200`, `PUT` `200`, `DELETE` `204`, `400 Bad Request` y `404 Not Found`) en `/api/contenidos`.
+- `ContenidoRepositoryTest`: valida persistencia JPA sobre base de datos H2.
+
+Ejecutar todas las pruebas:
+
+```bash
+./gradlew test
+```
+
 ## Estructura del servicio
 
 ```text

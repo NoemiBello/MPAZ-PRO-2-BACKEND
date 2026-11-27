@@ -1,0 +1,53 @@
+### 1. Listar todos los contenidos (GET)
+GET http://localhost:8080/api/contenidos
+
+### 2. Crear nuevo contenido (POST -> 201 Created)
+POST http://localhost:8080/api/contenidos
+Content-Type: application/json
+
+{
+  "asignatura": "Lenguaje",
+  "unidad": "Unidad 1",
+  "objetivo": "Comprender textos narrativos",
+  "tipo": "Lectura",
+  "titulo": "Mi primera lectura",
+  "contenido": "Habia una vez un gato que vivia en el campo.",
+  "pregunta": "Donde vivia el gato?",
+  "imagenUri": null,
+  "estado": "PENDIENTE"
+}
+
+### 3. Consultar contenido por ID (GET -> 200 OK / 404 Not Found)
+GET http://localhost:8080/api/contenidos/1
+
+### 4. Actualizar contenido y aprobar estado UTP (PUT -> 200 OK)
+PUT http://localhost:8080/api/contenidos/1
+Content-Type: application/json
+
+{
+  "asignatura": "Lenguaje",
+  "unidad": "Unidad 1",
+  "objetivo": "Comprender textos narrativos",
+  "tipo": "Lectura",
+  "titulo": "Mi primera lectura aprobada",
+  "contenido": "Habia una vez un gato muy curioso que vivia en el campo.",
+  "pregunta": "Como era el gato?",
+  "imagenUri": null,
+  "estado": "APROBADO"
+}
+
+### 5. Probar validacion de campos obligatorios (POST -> 400 Bad Request)
+POST http://localhost:8080/api/contenidos
+Content-Type: application/json
+
+{
+  "asignatura": "",
+  "unidad": "Unidad 1",
+  "objetivo": "",
+  "tipo": "",
+  "titulo": "",
+  "contenido": ""
+}
+
+### 6. Eliminar contenido por ID (DELETE -> 204 No Content)
+DELETE http://localhost:8080/api/contenidos/1
